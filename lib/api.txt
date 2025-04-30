@@ -1,9 +1,48 @@
 // Signature format: 4.0
 package org.example {
 
-  public final class Library {
-    ctor public Library();
-    method public boolean someLibraryMethod();
+  public final class Example1 {
+    ctor public Example1();
+    method public void myMethod(String text);
+  }
+
+  public final class Example2 {
+    ctor public Example2();
+  }
+
+  public interface Example3 {
+    method public void myMethod1();
+  }
+
+  public final class Example4 {
+    ctor public Example4();
+    field public static final org.example.Example4.Companion Companion;
+    field public static final int MY_CONST = 42; // 0x2a
+  }
+
+  public static final class Example4.Companion {
+    property public static final int MY_CONST;
+  }
+
+  public final class Example5 {
+    ctor public Example5(String foo);
+    method public String component1();
+    method public org.example.Example5 copy(String foo);
+    method public String getFoo();
+    property public final String foo;
+  }
+
+  public final class Example6 {
+    ctor public Example6();
+    method public void myMethod(int... values);
+  }
+
+  public interface Example7 {
+    method public String? compute();
+  }
+
+  public final class Example8Kt {
+    method public static void myMethod();
   }
 
 }

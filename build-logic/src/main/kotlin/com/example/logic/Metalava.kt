@@ -23,8 +23,9 @@ internal fun Project.setUpMetalavaTask() {
 
     val sourcePaths: FileCollection =
         project.files(project.provider { mainSourceSet.allSource.srcDirs })
-    val generateApi = tasks.register("generateApi", MetalavaTask::class.java) {
+    val generateApi = tasks.register("generateApi", GenerateApiTask::class.java) {
         it.metalavaClasspath.from(getMetalavaClasspath())
+        it.bootClasspath.from(bootClasspath())
         it.sourcePaths.from(sourcePaths)
         it.dependencyClasspath.from(mainSourceSet.compileClasspath)
         it.apiFile.set(layout.buildDirectory.file("current.txt"))
@@ -33,6 +34,14 @@ internal fun Project.setUpMetalavaTask() {
     tasks.register("updateApi", UpdateApiTask::class.java) { task ->
         task.inputFile.set(generateApi.flatMap { it.apiFile })
         task.outputFile.set(layout.projectDirectory.file("api.txt"))
+    }
+
+    tasks.register("checkApi", CheckApiTask::class.java) {
+        it.metalavaClasspath.from(getMetalavaClasspath())
+        it.bootClasspath.from(bootClasspath())
+        it.sourcePaths.from(sourcePaths)
+        it.dependencyClasspath.from(mainSourceSet.compileClasspath)
+        it.referenceApiFile.set(layout.projectDirectory.file("api.txt"))
     }
 }
 
@@ -43,6 +52,35 @@ private fun Project.getMetalavaClasspath(): FileCollection {
         configurations.detachedConfiguration(dependencies.create(METALAVA))
     return project.files(configuration)
 }
+
+private fun Project.bootClasspath(): File {
+    return File(rootDir, "android.jar")
+}
+
+@CacheableTask
+abstract class CheckApiTask @Inject constructor(workerExecutor: WorkerExecutor) : MetalavaTask(workerExecutor) {
+    @get:[InputFile PathSensitive(PathSensitivity.NONE)]
+    abstract val referenceApiFile: RegularFileProperty
+    @TaskAction
+    fun execute() {
+        runMetalava(listOf("--check-compatibility:api:released", referenceApiFile.get().asFile.absolutePath))
+    }
+
+}
+
+@CacheableTask
+abstract class GenerateApiTask @Inject constructor(workerExecutor: WorkerExecutor) : MetalavaTask(workerExecutor) {
+    @get:OutputFile
+    abstract val apiFile: RegularFileProperty
+
+    @TaskAction
+    fun execute() {
+        runMetalava(
+            listOf("--api", apiFile.get().asFile.absolutePath)
+        )
+    }
+}
+
 
 @CacheableTask
 abstract class MetalavaTask @Inject constructor(private val workerExecutor: WorkerExecutor): DefaultTask() {
@@ -59,17 +97,13 @@ abstract class MetalavaTask @Inject constructor(private val workerExecutor: Work
     @get:[InputFiles PathSensitive(PathSensitivity.RELATIVE)]
     abstract val sourcePaths: ConfigurableFileCollection
 
-    @get:OutputFile
-    abstract val apiFile: RegularFileProperty
-
-    @TaskAction
-    fun runMetalava() {
+    fun runMetalava(extraArgs: List<String>) {
         val allArgs = listOf(
             "--format=v4", "--warnings-as-errors",
-            "--api", apiFile.get().asFile.absolutePath,
             "--source-path",
             sourcePaths.filter { it.exists() }.joinToString(File.pathSeparator),
-        )
+            "--classpath", (bootClasspath + dependencyClasspath.files).joinToString(File.pathSeparator)
+        ) + extraArgs
         val workQueue = workerExecutor.processIsolation()
         workQueue.submit(MetalavaWorkAction::class.java) { parameters ->
             parameters.args.set(allArgs)
