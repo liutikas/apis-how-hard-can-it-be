@@ -1,4 +1,4 @@
 package org.example
 
-class Example2() {
+class Example2 {
 }
