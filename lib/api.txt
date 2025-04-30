@@ -1,0 +1,10 @@
+// Signature format: 4.0
+package org.example {
+
+  public final class Library {
+    ctor public Library();
+    method public boolean someLibraryMethod();
+  }
+
+}
+
