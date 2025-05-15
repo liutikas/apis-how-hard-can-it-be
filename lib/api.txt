@@ -1,9 +1,8 @@
 // Signature format: 4.0
 package org.example {
 
-  public final class Example1 {
-    ctor public Example1();
-    method public void myMethod(String text);
+  public final class Example1Kt {
+    method public static void myMethod();
   }
 
   public final class Example2 {
@@ -16,12 +15,7 @@ package org.example {
 
   public final class Example4 {
     ctor public Example4();
-    field public static final org.example.Example4.Companion Companion;
-    field public static final int MY_CONST = 42; // 0x2a
-  }
-
-  public static final class Example4.Companion {
-    property public static final int MY_CONST;
+    method public void myMethod(String text);
   }
 
   public final class Example5 {
@@ -30,19 +24,6 @@ package org.example {
     method public org.example.Example5 copy(String foo);
     method public String getFoo();
     property public final String foo;
-  }
-
-  public final class Example6 {
-    ctor public Example6();
-    method public void myMethod(int... values);
-  }
-
-  public interface Example7 {
-    method public String? compute();
-  }
-
-  public final class Example8Kt {
-    method public static void myMethod();
   }
 
 }
