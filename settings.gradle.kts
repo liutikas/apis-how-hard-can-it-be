@@ -19,5 +19,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "apis-how-hard-can-it-be"
 include("lib")
+include("user")
 
 includeBuild("build-logic")
