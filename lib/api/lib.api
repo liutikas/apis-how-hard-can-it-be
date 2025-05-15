@@ -1,0 +1,28 @@
+public final class org/example/Example1Kt {
+	public static final fun myMethod ()V
+}
+
+public final class org/example/Example2 {
+	public fun <init> ()V
+}
+
+public abstract interface class org/example/Example3 {
+	public abstract fun myMethod1 ()V
+}
+
+public final class org/example/Example4 {
+	public fun <init> ()V
+	public final fun myMethod (Ljava/lang/String;)V
+}
+
+public final class org/example/Example5 {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/example/Example5;
+	public static synthetic fun copy$default (Lorg/example/Example5;Ljava/lang/String;ILjava/lang/Object;)Lorg/example/Example5;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFoo ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
